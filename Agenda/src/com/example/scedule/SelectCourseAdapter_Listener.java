@@ -113,6 +113,5 @@ Log.i("SELECTCOURSE","OnClick");
 		clist.get(position).setCBView(checkBox);
 		return convertView;
 	}
-	//fedfd
 
 }
