@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Agenda</string>
+    <string name="action_settings">Settings</string>
+    <string name="courses">Courses</string>
+    <string name="schedule">Schedule</string>
+    <string name="profile">Profile</string>
+    <string name="newsFeed">News Feed</string>
+    <string name="title_activity_display_profile">Profile</string>
+    <string name="title_activity_display_courses">Courses</string>
+    <string name="title_activity_display_schedule">Schedule</string>
+    <string name="title_activity_display_news">News</string>
+    <string name="under_construction">UNDER CONSTRUCTION</string>
+    <string name="close">Close</string>
+    <string name="hello_world">Hello world!</string>
+
+
+    <string-array name="pref_default_entries" />
+    <string-array name="pref_default_values" />
+
+    <string name="TargetSummary">My Target</string>
+    <string name="TargetTitle">My title</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_tab1_fragment">Tab1Fragment</string>
+    <string name="title_activity_tab2_fragment">Tab2Fragment</string>
+    <string name="title_activity_tab3_fragment">Tab3Fragment</string>
+    <string name="title_activity_tabs_fragment">TabsFragmentActivity</string>
+    <string name="addCourse">Add</string>
+    <string name="description">empty</string>
+
+</resources>
