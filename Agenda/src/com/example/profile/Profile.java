@@ -122,6 +122,5 @@ public class Profile extends Activity {
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP));
         return true;
     }
-	//loalalal
-
+//fethchcjh
 }
