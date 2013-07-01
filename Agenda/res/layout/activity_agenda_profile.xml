@@ -18,6 +18,7 @@
     
     <TextView android:id="@+id/prof_remainCourses"
          android:textIsSelectable="false"
+         android:clickable="true"
          android:textSize="20sp"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
@@ -48,5 +49,11 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_below="@id/sep3"/>
+    
+    <View android:id="@+id/sep4"
+    	android:layout_width="fill_parent"
+    	android:layout_height="1dp"
+    	android:background="@android:color/darker_gray"
+    	android:layout_below="@id/prof_direction"/>
 
 </RelativeLayout>

@@ -11,6 +11,8 @@ import com.example.courses.CoursesDataBaseHelper;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,11 +20,23 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 public class Profile extends Activity {
 	CoursesDataBaseHelper db_helper;
 	SQLiteDatabase db;
+	double average = 0.0;
+	int remain_courses = 48;
+	int semester_courses = 0;
+	String direction = " - ";
+	Context ctx = this;
+	
+	//kor=remain courses kormou -- bas=remain basic courses -- epil=remain choice courses -- remain general courses
+	int kor = 27, bas = 5, epil = 10, gen = 6;
+	
+	//th,ys,ep true if user has pass one basic course from each direction
+	boolean th = false, ys = false, ep = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +50,14 @@ public class Profile extends Activity {
         bar.setCustomView(bv);
         bar.setBackgroundDrawable(getResources().getDrawable(R.drawable.bd1));
         
-		setContentView(R.layout.profile);
+		setContentView(R.layout.activity_agenda_profile);
 		
 		db_helper = new CoursesDataBaseHelper(this);
 		
-		double average;
-		int remain_courses,semester_courses;
-		String direction;
-		average = calculateAverage();
-		remain_courses = remainCourses();
+		calculateAverage_RemainCourses();
 		semester_courses = semesterCourses();
 		direction = calculateDirection();
 		
-		remain_courses = 7;
 		semester_courses = 10;
 		direction = "Θεωριτική Πληροφορική";
 		TextView txa = (TextView)this.findViewById(R.id.prof_average);
@@ -56,6 +65,52 @@ public class Profile extends Activity {
 		
 		TextView txr = (TextView) this.findViewById(R.id.prof_remainCourses);
 		txr.setText(Html.fromHtml("<big><b>Remain Courses</b></big> <br> <small>"+remain_courses+"</small>"));
+		txr.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		    	TextView ms = new TextView(ctx);
+		    	String basika="";
+		    	int bas2 = bas;
+		    	
+		    	if(bas != 0){
+		    		if(!th || !ys || !ep){
+		    			basika = "( ";
+		    			if(!th){
+		    				basika += "1 από Θεωρητική Πληροφορική";
+		    				bas2--;
+		    			}
+		    			if(!ys){
+		    				if(!th)
+		    					basika += " - ";
+		    				basika += "1 από Υπολογιστικών Συστημάτων και εφαρμογών";
+		    				bas2--;
+		    			}
+		    			if(!ep){
+		    				if(!th || !ys)
+		    					basika += " - ";
+		    				basika += "1 από Επικοινωνιών και Επεξεργασία σήματος";
+		    				bas2--;
+		    			}
+		    			if(bas2 != 0){
+		    				if(!th || !ys || !ep)
+		    					basika += " - ";
+		    				basika += String.valueOf(bas2) + " από όποιαδήποτε κατεύθυνση";
+		    			}
+		    			basika += (")");	
+		    		}
+		    		else{
+		    			basika += ("(από όποιαδήποτε κατεύθυνση)");
+		    		}
+		    	}
+		    	ms.setText("Κορμου: " + kor + '\n'+ '\n' + "Βασικά Κατεύθυνσης: " + bas + " " + basika + '\n' + '\n' + "Επιλογής: " + epil + '\n' + '\n' + "Γενικής Παιδείας: " + gen );
+		    	ms.setTextSize(16);
+		    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		    	builder
+		    	.setTitle("Remain Courses")
+		    	.setView(ms)
+		    	.setNeutralButton("OK", null)
+		    	.show();
+		    }
+		    });
 		
 		TextView txs = (TextView) this.findViewById(R.id.prof_semesterCourses);
 		txs.setText(Html.fromHtml("<big><b>Current Semester Courses</b></big> <br> <small>"+semester_courses+"</small>"));
@@ -64,7 +119,7 @@ public class Profile extends Activity {
 		txd.setText(Html.fromHtml("<big><b>Proposed direction</b></big> <br> <small>"+direction+"</small>"));
 	}
 	
-	private double calculateAverage(){
+	private void calculateAverage_RemainCourses(){
 		ArrayList<Double> gradesK = new ArrayList<Double>();
 		ArrayList<Double> gradesTh = new ArrayList<Double>();
 		ArrayList<Double> gradesYs = new ArrayList<Double>();
@@ -72,12 +127,12 @@ public class Profile extends Activity {
 		ArrayList<Double> gradesRest = new ArrayList<Double>();
 		ArrayList<Double> igrades = new ArrayList<Double>();
 		double k20=0.0,k23=0.0;
-		double average = 0.0;
 		
 
 		db = db_helper.getReadableDatabase();
 		String select = "SELECT Grade, Code FROM Subjects WHERE (Code LIKE 'Κ__' OR Code LIKE 'Κ__α' OR Code LIKE 'Κ__β')  AND Grade!=-1";
 		String select2 = "SELECT Grade, ThP, YS, EP FROM Subjects WHERE Code NOT LIKE 'Κ%' AND Code NOT LIKE '____ε' AND Code NOT LIKE 'ΓΠ%' AND Grade!=-1";
+		String select3 = "SELECT COUNT(*) FROM Subjects WHERE Code LIKE 'ΓΠ%' AND Grade!=-1";
 		
 		Cursor cursor = db.rawQuery(select, null);
 		if(cursor.moveToFirst()){
@@ -122,17 +177,30 @@ Log.i("PROFILE",code);
 			do{
 				Double grade = cursor.getDouble(0);
 Log.i("PROFILE",String.valueOf(grade));
-				if(cursor.getDouble(1) == 1)
+				if(cursor.getDouble(1) == 1){
 					gradesTh.add(grade);
-				else if(cursor.getDouble(2) == 1)
+					th = true;
+				}
+				else if(cursor.getDouble(2) == 1){
 					gradesYs.add(grade);
-				else if(cursor.getDouble(3) ==1)
+					ys = true;
+				}
+				else if(cursor.getDouble(3) ==1){
 					gradesEp.add(grade);
+					ep = true;
+				}
 				else
 					gradesRest.add(grade);
 			}while(cursor.moveToNext());
 		}
 		cursor.close();
+		
+		cursor = db.rawQuery(select3, null);
+		cursor.moveToFirst();
+		gen -= cursor.getInt(0);
+		remain_courses -= cursor.getInt(0);
+		cursor.close();
+		
 		db.close();
 		db_helper.close();
 		Collections.sort(gradesTh);
@@ -156,6 +224,8 @@ Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
 			weight_grade += 2*gradesTh.get(0);
 			gradesTh.remove(0);
 			syntelestes += 2;
+			bas --;
+			remain_courses --;
 		}
 		if(!gradesYs.isEmpty()){
 Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
@@ -163,6 +233,8 @@ Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
 			weight_grade += 2*gradesYs.get(0);
 			gradesYs.remove(0);
 			syntelestes += 2;
+			bas --;
+			remain_courses --;
 		}
 		if(!gradesEp.isEmpty()){
 Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
@@ -170,6 +242,8 @@ Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 			weight_grade += 2*gradesEp.get(0);
 			gradesEp.remove(0);
 			syntelestes += 2;
+			bas --;
+			remain_courses --;
 		}
 		
 		//And at least 2 basic course from whichever direction
@@ -183,6 +257,8 @@ Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 				weight_grade += 2*gradesTh.get(0);
 				syntelestes += 2;
 				gradesTh.remove(0);
+				bas --;
+				remain_courses --;
 			}
 			else
 				break;
@@ -198,17 +274,22 @@ Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 				weight_grade += 1.5*gradesRest.get(0);
 				syntelestes += 1.5;
 				gradesRest.remove(0);
+				epil --;
+				remain_courses --;
 			}
 			else
 				break;
 		}
 		
+		//Ptyxiakh 1,2 h Praktiki
 		for(int i=0; i<2; i++){
 			if(!igrades.isEmpty()){
 Log.i("PROFILE PTYX",String.valueOf(igrades.get(0)));
 				weight_grade += 3.0*igrades.get(0);
 				syntelestes += 3.0;
 				igrades.remove(0);
+				kor --;
+				remain_courses --;
 			}
 			else
 				break;
@@ -219,14 +300,20 @@ Log.i("PROFILE PTYX",String.valueOf(igrades.get(0)));
 Log.i("PROFILE K value",String.valueOf(gradesK.get(i)));
 			weight_grade += 2.0*gradesK.get(i);
 			syntelestes += 2.0;
+			kor --;
+			remain_courses --;
 		}
 		if(k20!=0.0){
 			weight_grade += 2.0*k20;
 			syntelestes += 2.0;
+			kor --;
+			remain_courses --;
 		}
 		if(k23!=0.0){
 			weight_grade += 2.0*k23;
 			syntelestes += 2.0;
+			kor --;
+			remain_courses --;
 		}
 Log.i("PROFILE WEIGHT GRADE+SYNTEL",String.valueOf(weight_grade)+"  "+String.valueOf(syntelestes));
 		if(weight_grade!=0)
@@ -234,11 +321,7 @@ Log.i("PROFILE WEIGHT GRADE+SYNTEL",String.valueOf(weight_grade)+"  "+String.val
 		DecimalFormat df = new DecimalFormat("#.##");
 		String average2 = df.format(average);
 System.out.println("Profile Average is " + average2);		
-		return Double.valueOf(average2);
-	}
-	
-	private int remainCourses(){
-		return 1;
+		average = Double.valueOf(average2);
 	}
 	
 	private int semesterCourses(){
