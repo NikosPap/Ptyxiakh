@@ -15,6 +15,7 @@ import android.widget.TextView;
 public class CourseAdapter extends ArrayAdapter<CourseItem>{
 	private LayoutInflater inflater;
 	private List<CourseItem> clist;
+	CoursesDataBaseHelper DBHelper;
 	
 
 	private static class SelectViewHolder {
@@ -37,11 +38,12 @@ public class CourseAdapter extends ArrayAdapter<CourseItem>{
 
 	}
 	
-	public CourseAdapter(Context context, List<CourseItem> CourseList) {
+	public CourseAdapter(Context context, List<CourseItem> CourseList, CoursesDataBaseHelper DB) {
 		super(context, R.layout.course_row, R.id.rowTextView, CourseList);
 		// Cache the LayoutInflate to avoid asking for a new one each time.
 		clist = CourseList;
 		inflater = LayoutInflater.from(context);
+		DBHelper = DB;
 	}
 
 	@Override
@@ -85,7 +87,7 @@ public class CourseAdapter extends ArrayAdapter<CourseItem>{
 							pos++;
 						clist.remove(course);
 						clist.add(pos, course);
-						course.setChecked(cb.isChecked());						
+						course.setChecked(cb.isChecked());
 						notifyDataSetChanged();
 					}
 					else{
@@ -95,6 +97,7 @@ public class CourseAdapter extends ArrayAdapter<CourseItem>{
 						while(clist.get(pos).isChecked())
 								pos++;
 						clist.add(pos, course);
+						course.setGrade(-1.0);
 						notifyDataSetChanged();
 					}
 				}

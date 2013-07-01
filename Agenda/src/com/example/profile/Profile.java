@@ -6,7 +6,6 @@ import java.util.Collections;
 
 import com.example.agenda.R;
 import com.example.agendaMain.AgendMainActivity;
-import com.example.courses.CourseItem;
 import com.example.courses.CoursesDataBaseHelper;
 
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +36,7 @@ public class Profile extends Activity {
         bar.setCustomView(bv);
         bar.setBackgroundDrawable(getResources().getDrawable(R.drawable.bd1));
         
-		setContentView(R.layout.activity_display_profile);
+		setContentView(R.layout.profile);
 		
 		db_helper = new CoursesDataBaseHelper(this);
 		
@@ -47,6 +47,21 @@ public class Profile extends Activity {
 		remain_courses = remainCourses();
 		semester_courses = semesterCourses();
 		direction = calculateDirection();
+		
+		remain_courses = 7;
+		semester_courses = 10;
+		direction = "Θεωριτική Πληροφορική";
+		TextView txa = (TextView)this.findViewById(R.id.prof_average);
+		txa.setText(Html.fromHtml("<big><b>Average</b></big> <br> <small>"+average+"</small>"));
+		
+		TextView txr = (TextView) this.findViewById(R.id.prof_remainCourses);
+		txr.setText(Html.fromHtml("<big><b>Remain Courses</b></big> <br> <small>"+remain_courses+"</small>"));
+		
+		TextView txs = (TextView) this.findViewById(R.id.prof_semesterCourses);
+		txs.setText(Html.fromHtml("<big><b>Current Semester Courses</b></big> <br> <small>"+semester_courses+"</small>"));
+		
+		TextView txd = (TextView) this.findViewById(R.id.prof_direction);
+		txd.setText(Html.fromHtml("<big><b>Proposed direction</b></big> <br> <small>"+direction+"</small>"));
 	}
 	
 	private double calculateAverage(){
@@ -59,7 +74,7 @@ public class Profile extends Activity {
 		double k20=0.0,k23=0.0;
 		double average = 0.0;
 		
-		db_helper.openDataBase();
+
 		db = db_helper.getReadableDatabase();
 		String select = "SELECT Grade, Code FROM Subjects WHERE (Code LIKE 'Κ__' OR Code LIKE 'Κ__α' OR Code LIKE 'Κ__β')  AND Grade!=-1";
 		String select2 = "SELECT Grade, ThP, YS, EP FROM Subjects WHERE Code NOT LIKE 'Κ%' AND Code NOT LIKE '____ε' AND Code NOT LIKE 'ΓΠ%' AND Grade!=-1";
@@ -70,29 +85,29 @@ public class Profile extends Activity {
 				String code = cursor.getString(1);
 				Double grade = cursor.getDouble(0);
 Log.i("PROFILE",code);
-				if(code == "Κ26" || code == "Κ27" || code == "Κ28")
+				if(code.equals("Κ26") || code.equals("Κ27") || code.equals("Κ28"))
 					igrades.add(grade);
-				else if(code == "Κ20α" || code == "Κ20β"){
+				else if(code.equals("Κ20α") || code.equals("Κ20β")){
 					if(k20 == 0.0)
 						k20 = grade;
 					else{
 						if(grade > k20){
-							if(code == "Κ20α")
+							if(code.equals("Κ20α"))
 								gradesEp.add(k20);
 							else
 								gradesTh.add(k20);
 							k20 = grade;
 						}
 						else{
-							if(code == "Κ20β")
-								gradesEp.add(k20);
+							if(code.equals("Κ20β"))
+								gradesEp.add(grade);
 							else
-								gradesTh.add(k20);
+								gradesTh.add(grade);
 						}
 							
 					}					
 				}
-				else if(code == "Κ23α" || code == "Κ23β"){
+				else if(code.equals("Κ23α") || code.equals("Κ23β")){
 					if(cursor.getDouble(0)>k23)
 						k23 = cursor.getDouble(0);
 				}
@@ -125,27 +140,32 @@ Log.i("PROFILE",String.valueOf(grade));
 		Collections.sort(gradesEp);
 		Collections.sort(gradesRest);
 		Collections.sort(igrades);
+		Collections.reverse(gradesTh);
+		Collections.reverse(gradesYs);
+		Collections.reverse(gradesEp);
+		Collections.reverse(gradesRest);
+		Collections.reverse(igrades);
 		
 		int basicCoursesNum = 5;
 		double weight_grade = 0.0, syntelestes = 0.0;
 		
 		//We need at least one basic course from each direction (3 basic courses)
 		if(!gradesTh.isEmpty()){
-Log.i("PROFILE TH","Theoritiki");
+Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
 			basicCoursesNum--;
 			weight_grade += 2*gradesTh.get(0);
 			gradesTh.remove(0);
 			syntelestes += 2;
 		}
 		if(!gradesYs.isEmpty()){
-Log.i("PROFILE YS","Ypologistika");
+Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
 			basicCoursesNum--;
 			weight_grade += 2*gradesYs.get(0);
 			gradesYs.remove(0);
 			syntelestes += 2;
 		}
 		if(!gradesEp.isEmpty()){
-Log.i("PROFILE EP", "Epeksergasia");
+Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 			basicCoursesNum--;
 			weight_grade += 2*gradesEp.get(0);
 			gradesEp.remove(0);
@@ -156,6 +176,7 @@ Log.i("PROFILE EP", "Epeksergasia");
 		gradesTh.addAll(gradesYs);
 		gradesTh.addAll(gradesEp);
 		Collections.sort(gradesTh);
+		Collections.reverse(gradesTh);
 		
 		for(int i=0; i<basicCoursesNum; i++){
 			if(!gradesTh.isEmpty()){
@@ -170,6 +191,7 @@ Log.i("PROFILE EP", "Epeksergasia");
 		//We need 10 courses basic, epiloghs or eleuthera
 		gradesRest.addAll(gradesTh);
 		Collections.sort(gradesRest);
+		Collections.reverse(gradesRest);
 		
 		for(int i=0; i<10; i++){
 			if(!gradesRest.isEmpty()){
@@ -206,8 +228,9 @@ Log.i("PROFILE K value",String.valueOf(gradesK.get(i)));
 			weight_grade += 2.0*k23;
 			syntelestes += 2.0;
 		}
-		
-		average = (double)weight_grade/(double)syntelestes;
+Log.i("PROFILE WEIGHT GRADE+SYNTEL",String.valueOf(weight_grade)+"  "+String.valueOf(syntelestes));
+		if(weight_grade!=0)
+			average = (double)weight_grade/(double)syntelestes;
 		DecimalFormat df = new DecimalFormat("#.##");
 		String average2 = df.format(average);
 System.out.println("Profile Average is " + average2);		

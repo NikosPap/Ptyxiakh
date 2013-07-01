@@ -35,7 +35,7 @@ public class Fragment3_Ys extends ListFragment {
 		subjects = new ArrayList<CourseItem>();
 		
 		myDbHelper = new CoursesDataBaseHelper(this.getActivity());
-		myDbHelper.openDataBase();
+		//db = myDbHelper.openDatabase();
 		db = myDbHelper.getReadableDatabase();
 		
 		
@@ -66,8 +66,9 @@ public class Fragment3_Ys extends ListFragment {
 		}
 		cursor2.close();
 		
+		db.close();
 		myDbHelper.close();
-		CourseAdapter mAdapter = new CourseAdapter(this.getActivity(),subjects);
+		CourseAdapter mAdapter = new CourseAdapter(this.getActivity(),subjects,myDbHelper);
 		setListAdapter(mAdapter);
 		
 		
@@ -91,8 +92,8 @@ public class Fragment3_Ys extends ListFragment {
 		super.onDestroyView();
 
 		//Store users selection
-		myDbHelper.openDataBase();
 		db = myDbHelper.getReadableDatabase();
+		//db = myDbHelper.openDatabase();
 		for(int i = 0; i<subjects.size(); i++){
 			CourseItem s = subjects.get(i);
 			
@@ -107,6 +108,7 @@ public class Fragment3_Ys extends ListFragment {
 				db.execSQL(update);
 			}
 		}
+		db.close();
 		myDbHelper.close();
 	}
 }
