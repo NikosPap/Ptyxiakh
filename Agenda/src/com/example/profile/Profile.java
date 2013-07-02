@@ -1,12 +1,16 @@
 package com.example.profile;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
 
 import com.example.agenda.R;
 import com.example.agendaMain.AgendMainActivity;
 import com.example.courses.CoursesDataBaseHelper;
+import com.example.news.ITCutiesReaderAppActivity;
 
 import android.os.Bundle;
 import android.app.ActionBar;
@@ -14,6 +18,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.Html;
@@ -21,11 +26,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class Profile extends Activity {
-	CoursesDataBaseHelper db_helper;
-	SQLiteDatabase db;
+	CoursesDataBaseHelper db_courseHelper;
+	SQLiteDatabase dbC;
+	Set<String> set;
 	double average = 0.0;
 	int remain_courses = 48;
 	int semester_courses = 0;
@@ -52,14 +59,17 @@ public class Profile extends Activity {
         
 		setContentView(R.layout.activity_agenda_profile);
 		
-		db_helper = new CoursesDataBaseHelper(this);
+		db_courseHelper = new CoursesDataBaseHelper(this);
+        try { 
+        	db_courseHelper.createDataBase();
+        } catch (IOException ioe) {
+        	throw new Error("Unable to create database");
+        }
 		
 		calculateAverage_RemainCourses();
-		semester_courses = semesterCourses();
 		direction = calculateDirection();
-		
-		semester_courses = 10;
 		direction = "Θεωριτική Πληροφορική";
+		
 		TextView txa = (TextView)this.findViewById(R.id.prof_average);
 		txa.setText(Html.fromHtml("<big><b>Average</b></big> <br> <small>"+average+"</small>"));
 		
@@ -112,7 +122,37 @@ public class Profile extends Activity {
 		    }
 		    });
 		
+		semesterCourses();
 		TextView txs = (TextView) this.findViewById(R.id.prof_semesterCourses);
+		txs.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		    	String text = "";
+		    	TextView ms = new TextView(ctx);
+		    	ScrollView scroll = new ScrollView(ctx);
+		    	
+		    	if(set != null){
+		    		if(!set.isEmpty()){
+		    			Iterator<String> setIter = set.iterator();
+		    			for(int i=0; i<set.size();i++){
+		    				text += "--" + setIter.next() + '\n' + '\n';
+		    			}
+		    		}
+		    		else
+		    			text += "No course has been selected for this semester";
+		    	}
+		    	else
+		    		text += "No course has been selected for this semester";
+		    	
+		    	ms.setText(text);
+		    	scroll.addView(ms);
+		    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		    	builder
+		    	.setTitle("Current Semester Courses")
+		    	.setView(scroll)
+		    	.setNeutralButton("OK", null)
+		    	.show();
+		    }
+		});
 		txs.setText(Html.fromHtml("<big><b>Current Semester Courses</b></big> <br> <small>"+semester_courses+"</small>"));
 		
 		TextView txd = (TextView) this.findViewById(R.id.prof_direction);
@@ -129,12 +169,12 @@ public class Profile extends Activity {
 		double k20=0.0,k23=0.0;
 		
 
-		db = db_helper.getReadableDatabase();
+		dbC = db_courseHelper.getReadableDatabase();
 		String select = "SELECT Grade, Code FROM Subjects WHERE (Code LIKE 'Κ__' OR Code LIKE 'Κ__α' OR Code LIKE 'Κ__β')  AND Grade!=-1";
 		String select2 = "SELECT Grade, ThP, YS, EP FROM Subjects WHERE Code NOT LIKE 'Κ%' AND Code NOT LIKE '____ε' AND Code NOT LIKE 'ΓΠ%' AND Grade!=-1";
 		String select3 = "SELECT COUNT(*) FROM Subjects WHERE Code LIKE 'ΓΠ%' AND Grade!=-1";
 		
-		Cursor cursor = db.rawQuery(select, null);
+		Cursor cursor = dbC.rawQuery(select, null);
 		if(cursor.moveToFirst()){
 			do{
 				String code = cursor.getString(1);
@@ -172,7 +212,7 @@ Log.i("PROFILE",code);
 		}
 		cursor.close();
 		
-		cursor = db.rawQuery(select2, null);
+		cursor = dbC.rawQuery(select2, null);
 		if(cursor.moveToFirst()){
 			do{
 				Double grade = cursor.getDouble(0);
@@ -195,14 +235,14 @@ Log.i("PROFILE",String.valueOf(grade));
 		}
 		cursor.close();
 		
-		cursor = db.rawQuery(select3, null);
+		cursor = dbC.rawQuery(select3, null);
 		cursor.moveToFirst();
 		gen -= cursor.getInt(0);
 		remain_courses -= cursor.getInt(0);
 		cursor.close();
 		
-		db.close();
-		db_helper.close();
+		dbC.close();
+		db_courseHelper.close();
 		Collections.sort(gradesTh);
 		Collections.sort(gradesYs);
 		Collections.sort(gradesEp);
@@ -324,8 +364,20 @@ System.out.println("Profile Average is " + average2);
 		average = Double.valueOf(average2);
 	}
 	
-	private int semesterCourses(){
-		return 1;
+	private void semesterCourses(){
+		SharedPreferences sharedPref;
+		String preFile = ITCutiesReaderAppActivity.PREFS_NAME;
+		
+		//Retrieve shared preferences
+        sharedPref = getSharedPreferences(preFile, 0);
+        
+		//Retrieve semester courses
+		set = sharedPref.getStringSet("CoursesChecked", null);
+		
+		if(set == null)
+			semester_courses = 0;
+		else
+			semester_courses = set.size();
 	}
 
 	private String calculateDirection(){

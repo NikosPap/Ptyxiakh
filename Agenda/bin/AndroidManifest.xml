@@ -40,10 +40,6 @@
             android:name="com.example.scedule.Schedule"
             android:label="@string/title_activity_display_schedule" >
         </activity>
-        <activity
-            android:name="com.example.agenda.MainActivity"
-            android:label="@string/title_activity_main" >
-        </activity>
 
     </application>
 

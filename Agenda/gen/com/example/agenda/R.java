@@ -36,56 +36,50 @@ public final class R {
         public static final int rss=0x7f020008;
     }
     public static final class id {
-        public static final int CheckBox01=0x7f090013;
-        public static final int action_settings=0x7f090019;
-        public static final int add=0x7f09001a;
-        public static final int button1=0x7f090000;
-        public static final int button2=0x7f090001;
-        public static final int button3=0x7f090002;
-        public static final int button4=0x7f090003;
-        public static final int date=0x7f090018;
-        public static final int grid_item_image=0x7f090005;
-        public static final int grid_item_label=0x7f090006;
-        public static final int gridview=0x7f090004;
-        public static final int grp_child=0x7f090011;
-        public static final int label=0x7f090007;
-        public static final int list=0x7f090010;
-        public static final int name_entry=0x7f090015;
-        public static final int prof_average=0x7f090008;
-        public static final int prof_direction=0x7f09000e;
-        public static final int prof_remainCourses=0x7f09000a;
-        public static final int prof_semesterCourses=0x7f09000c;
+        public static final int CheckBox01=0x7f09000f;
+        public static final int action_settings=0x7f090015;
+        public static final int add=0x7f090016;
+        public static final int date=0x7f090014;
+        public static final int grid_item_image=0x7f090001;
+        public static final int grid_item_label=0x7f090002;
+        public static final int gridview=0x7f090000;
+        public static final int grp_child=0x7f09000d;
+        public static final int label=0x7f090003;
+        public static final int list=0x7f09000c;
+        public static final int name_entry=0x7f090011;
+        public static final int prof_average=0x7f090004;
+        public static final int prof_direction=0x7f09000a;
+        public static final int prof_remainCourses=0x7f090006;
+        public static final int prof_semesterCourses=0x7f090008;
         public static final int realtabcontent=0x01010000;
-        public static final int rowTextView=0x7f090012;
-        public static final int row_name=0x7f090014;
-        public static final int sep1=0x7f090009;
-        public static final int sep2=0x7f09000b;
-        public static final int sep3=0x7f09000d;
-        public static final int sep4=0x7f09000f;
-        public static final int thumbnail=0x7f090016;
-        public static final int title=0x7f090017;
+        public static final int rowTextView=0x7f09000e;
+        public static final int row_name=0x7f090010;
+        public static final int sep1=0x7f090005;
+        public static final int sep2=0x7f090007;
+        public static final int sep3=0x7f090009;
+        public static final int sep4=0x7f09000b;
+        public static final int thumbnail=0x7f090012;
+        public static final int title=0x7f090013;
     }
     public static final class layout {
-        public static final int activity_agenda_main=0x7f030000;
-        public static final int activity_agenda_main_grid=0x7f030001;
-        public static final int activity_agenda_main_grid2=0x7f030002;
-        public static final int activity_agenda_profile=0x7f030003;
-        public static final int activity_display_news=0x7f030004;
-        public static final int activity_main=0x7f030005;
-        public static final int activity_schedule_courses=0x7f030006;
-        public static final int child_row=0x7f030007;
-        public static final int course_dialog=0x7f030008;
-        public static final int course_row=0x7f030009;
-        public static final int courses=0x7f03000a;
-        public static final int courses_ep=0x7f03000b;
-        public static final int courses_k=0x7f03000c;
-        public static final int courses_th=0x7f03000d;
-        public static final int courses_ys=0x7f03000e;
-        public static final int gradient=0x7f03000f;
-        public static final int gradient_hover=0x7f030010;
-        public static final int group_row=0x7f030011;
-        public static final int list_entry=0x7f030012;
-        public static final int list_row=0x7f030013;
+        public static final int activity_agenda_main_grid=0x7f030000;
+        public static final int activity_agenda_main_grid2=0x7f030001;
+        public static final int activity_agenda_profile=0x7f030002;
+        public static final int activity_display_news=0x7f030003;
+        public static final int activity_schedule_courses=0x7f030004;
+        public static final int child_row=0x7f030005;
+        public static final int course_dialog=0x7f030006;
+        public static final int course_row=0x7f030007;
+        public static final int courses=0x7f030008;
+        public static final int courses_ep=0x7f030009;
+        public static final int courses_k=0x7f03000a;
+        public static final int courses_th=0x7f03000b;
+        public static final int courses_ys=0x7f03000c;
+        public static final int gradient=0x7f03000d;
+        public static final int gradient_hover=0x7f03000e;
+        public static final int group_row=0x7f03000f;
+        public static final int list_entry=0x7f030010;
+        public static final int list_row=0x7f030011;
     }
     public static final class menu {
         public static final int account=0x7f080000;
@@ -103,15 +97,12 @@ public final class R {
         public static final int tabs=0x7f08000c;
     }
     public static final class string {
-        public static final int TargetSummary=0x7f05000d;
-        public static final int TargetTitle=0x7f05000e;
         public static final int action_settings=0x7f050001;
-        public static final int addCourse=0x7f050014;
+        public static final int addCourse=0x7f05000b;
         public static final int app_name=0x7f050000;
-        public static final int close=0x7f05000b;
+        public static final int close=0x7f05000a;
         public static final int courses=0x7f050002;
-        public static final int description=0x7f050015;
-        public static final int hello_world=0x7f05000c;
+        public static final int description=0x7f05000c;
         public static final int newsFeed=0x7f050005;
         public static final int profile=0x7f050004;
         public static final int schedule=0x7f050003;
@@ -119,12 +110,6 @@ public final class R {
         public static final int title_activity_display_news=0x7f050009;
         public static final int title_activity_display_profile=0x7f050006;
         public static final int title_activity_display_schedule=0x7f050008;
-        public static final int title_activity_main=0x7f05000f;
-        public static final int title_activity_tab1_fragment=0x7f050010;
-        public static final int title_activity_tab2_fragment=0x7f050011;
-        public static final int title_activity_tab3_fragment=0x7f050012;
-        public static final int title_activity_tabs_fragment=0x7f050013;
-        public static final int under_construction=0x7f05000a;
     }
     public static final class style {
         /** 
