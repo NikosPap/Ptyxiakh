@@ -36,7 +36,8 @@ public class Profile extends Activity {
 	double average = 0.0;
 	int remain_courses = 48;
 	int semester_courses = 0;
-	String direction = " - ";
+	String direction;
+	int direC = 0;
 	Context ctx = this;
 	
 	//kor=remain courses kormou -- bas=remain basic courses -- epil=remain choice courses -- remain general courses
@@ -66,10 +67,9 @@ public class Profile extends Activity {
         	throw new Error("Unable to create database");
         }
 		
-		calculateAverage_RemainCourses();
-		direction = calculateDirection();
-		direction = "Θεωριτική Πληροφορική";
-		
+        
+        //Calculate and display AVERAGE and REMAIN COURSES
+		calculateAverage_RemainCourses();		
 		TextView txa = (TextView)this.findViewById(R.id.prof_average);
 		txa.setText(Html.fromHtml("<big><b>Average</b></big> <br> <small>"+average+"</small>"));
 		
@@ -122,6 +122,8 @@ public class Profile extends Activity {
 		    }
 		    });
 		
+		
+		//Calculate and display CURRENT SEMESTER COURSES
 		semesterCourses();
 		TextView txs = (TextView) this.findViewById(R.id.prof_semesterCourses);
 		txs.setOnClickListener(new View.OnClickListener() {
@@ -155,8 +157,20 @@ public class Profile extends Activity {
 		});
 		txs.setText(Html.fromHtml("<big><b>Current Semester Courses</b></big> <br> <small>"+semester_courses+"</small>"));
 		
+		
+		//Calculate and display PROPOSED DIRECTION
+		calculateDirection();
+		String p="";
+		if(!direction.equals(" - ")){
+			if(direC<=5)
+				p = "<font color=\"red\">(Χαμηλή πρόταση)</font>";
+			else if(direC<9)
+				p = "<font color=\"blue\">(Μέτρια πρόταση)</font>";
+			else
+				p = "<font color=\"green\">(Υψηλή πρόταση)</font>";
+		}
 		TextView txd = (TextView) this.findViewById(R.id.prof_direction);
-		txd.setText(Html.fromHtml("<big><b>Proposed direction</b></big> <br> <small>"+direction+"</small>"));
+		txd.setText(Html.fromHtml("<big><b>Proposed direction</b></big> <br> <small>"+direction+p+"</small>"));
 	}
 	
 	private void calculateAverage_RemainCourses(){
@@ -254,13 +268,11 @@ Log.i("PROFILE",String.valueOf(grade));
 		Collections.reverse(gradesRest);
 		Collections.reverse(igrades);
 		
-		int basicCoursesNum = 5;
 		double weight_grade = 0.0, syntelestes = 0.0;
 		
 		//We need at least one basic course from each direction (3 basic courses)
 		if(!gradesTh.isEmpty()){
 Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
-			basicCoursesNum--;
 			weight_grade += 2*gradesTh.get(0);
 			gradesTh.remove(0);
 			syntelestes += 2;
@@ -269,7 +281,6 @@ Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
 		}
 		if(!gradesYs.isEmpty()){
 Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
-			basicCoursesNum--;
 			weight_grade += 2*gradesYs.get(0);
 			gradesYs.remove(0);
 			syntelestes += 2;
@@ -278,7 +289,6 @@ Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
 		}
 		if(!gradesEp.isEmpty()){
 Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
-			basicCoursesNum--;
 			weight_grade += 2*gradesEp.get(0);
 			gradesEp.remove(0);
 			syntelestes += 2;
@@ -292,7 +302,7 @@ Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 		Collections.sort(gradesTh);
 		Collections.reverse(gradesTh);
 		
-		for(int i=0; i<basicCoursesNum; i++){
+		for(int i=0; i<2; i++){
 			if(!gradesTh.isEmpty()){
 				weight_grade += 2*gradesTh.get(0);
 				syntelestes += 2;
@@ -380,9 +390,114 @@ System.out.println("Profile Average is " + average2);
 			semester_courses = set.size();
 	}
 
-	private String calculateDirection(){
-		return "Fuck";
+	private void calculateDirection(){
+		double gradeTh = 0.0, gradeYs = 0.0, gradeEp = 0.0;
+		double wTh = 0.0, wYs = 0.0, wEp = 0.0;
+		double synTh = 0.0, synYs = 0.0, synEp = 0.0;
+		int ThC = 0, YsC = 0, EpC = 0;
+		
+		dbC = db_courseHelper.getReadableDatabase();
+		String select = "SELECT Grade, ThP FROM Subjects WHERE Code NOT LIKE '___ε' AND Code NOT LIKE '____ε' AND (ThP=1 OR ThP=2) AND Grade!=-1";
+		String select2 = "SELECT Grade, YS FROM Subjects WHERE Code NOT LIKE '___ε' AND Code NOT LIKE '____ε' AND (YS=1 OR YS=2) AND Grade!=-1";
+		String select3 = "SELECT Grade, EP FROM Subjects WHERE Code NOT LIKE '___ε' AND Code NOT LIKE '____ε' AND (EP=1 OR EP=2) AND Grade!=-1";
+		
+		Cursor cursor = dbC.rawQuery(select, null);
+		if(cursor.moveToFirst()){
+			do{
+				ThC++;
+				wTh += ((2/cursor.getInt(1))*cursor.getDouble(0));
+				synTh += (2/cursor.getInt(1));
+			}while(cursor.moveToNext());
+		}
+		cursor.close();
+		if(wTh != 0.0)
+			gradeTh = wTh/synTh;
+		
+		cursor = dbC.rawQuery(select2, null);
+		if(cursor.moveToFirst()){
+			do{
+				YsC++;
+				wYs += ((2/cursor.getInt(1))*cursor.getDouble(0));
+				synYs += (2/cursor.getInt(1));
+			}while(cursor.moveToNext());
+		}
+		cursor.close();
+		if(wYs != 0.0)
+			gradeYs = wYs/synYs;
+		
+		cursor = dbC.rawQuery(select3, null);
+		if(cursor.moveToFirst()){
+			do{
+				EpC++;
+				wEp += ((2/cursor.getInt(1))*cursor.getDouble(0));
+				synEp += (2/cursor.getInt(1));
+			}while(cursor.moveToNext());
+		}
+		cursor.close();
+		if(wEp != 0.0)
+			gradeEp = wEp/synEp;
+		
+		dbC.close();
+		if(gradeTh==0.0 && gradeYs==0.0 && gradeEp==0.0)
+			direction = " - ";
+		else if(gradeTh>gradeYs && gradeTh>gradeEp){
+			direction = "Θεωρητική Πληροφορική";
+			direC = ThC;
+		}
+		else if(gradeYs>gradeTh && gradeYs>gradeEp){
+			direction = "Υπολογιστικών Συστημάτων και Εφαρμογών";
+			direC = YsC;
+		}
+		else if(gradeEp>gradeTh && gradeEp>gradeYs){
+			direction = "Επικοινωνιών και Επεξεργασίας Σήματος";
+			direC = EpC;
+		}
+		else if(gradeTh==gradeYs && gradeTh==gradeEp ){
+			if(ThC>=YsC && ThC>=EpC){
+				direction = "Θεωρητική Πληροφορική";
+				direC = ThC;
+			}
+			else if(YsC>=ThC && YsC>=EpC){
+				direction = "Υπολογιστικών Συστημάτων και Εφαρμογών";
+				direC = YsC;
+			}
+			else{
+				direction = "Επικοινωνιών και Επεξεργασίας Σήματος";
+				direC = EpC;
+			}
+		}
+		else if(gradeTh == gradeYs){
+			if(ThC>=YsC){
+				direction = "Θεωρητική Πληροφορική";
+				direC = ThC;
+			}
+			else{
+				direction = "Υπολογιστικών Συστημάτων και Εφαρμογών";
+				direC = YsC;
+			}
+		}
+		else if(gradeTh == gradeEp){
+			if(ThC>=EpC){
+				direction = "Θεωρητική Πληροφορική";
+				direC = ThC;
+			}
+			else{
+				direction = "Επικοινωνιών και Επεξεργασίας Σήματος";
+				direC = EpC;
+			}
+		}
+		else if(gradeYs==gradeEp){
+			if(YsC>=EpC){
+				direction = "Υπολογιστικών Συστημάτων και Εφαρμογών";
+				direC = YsC;
+			}
+			else{
+				direction = "Επικοινωνιών και Επεξεργασίας Σήματος";
+				direC = EpC;
+			}
+		}		
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

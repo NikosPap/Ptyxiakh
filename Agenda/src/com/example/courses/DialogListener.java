@@ -34,7 +34,7 @@ public class DialogListener implements OnShowListener{
 			
 			@Override
 			public void onClick(View v) {
-				String regex = "10||[0-9](\\.[0-9])?";
+				String regex = "10.0||10||[0-9](\\.[0-9])?";
 				if(grade != null){
 					String gr = grade.getText().toString();
 					if(gr.length()!=0){
