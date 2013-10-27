@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class ScheduleCourseDatabaseHandler extends SQLiteOpenHelper {
 	 
@@ -35,7 +34,7 @@ public class ScheduleCourseDatabaseHandler extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-Log.i("COURSEDATRABASE","Creating Database...");
+    	//Log.i("COURSEDATRABASE","Creating Database...");
         String CREATE_SCHEDULED_COURSES_TABLE = "CREATE TABLE " + TABLE_SCOURSES + "("
                 + KEY_DAY + " TEXT," + KEY_NAME + " TEXT," + KEY_CLASS + " TEXT,"
                 + KEY_HOUR + " TEXT" + ")";
@@ -65,7 +64,7 @@ Log.i("COURSEDATRABASE","Creating Database...");
     		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
  
     	}catch(SQLiteException e){
-Log.i("C_DATABASEHANDLER","DatabaseNotExist");
+			//Log.i("C_DATABASEHANDLER","DatabaseNotExist");
     		//database does't exist yet. 
     	}
  
@@ -160,7 +159,6 @@ Log.i("C_DATABASEHANDLER","DatabaseNotExist");
         if (c.moveToFirst()) {
             do {
                 res.add(new ScheduleCourseItem(c.getString(0)));
-//Log.i("DATABASE", c.getString(0));
             } while (c.moveToNext());
         }
         c.close();

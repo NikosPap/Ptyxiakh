@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +50,6 @@ public class SelectCourseAdapter_Listener extends ArrayAdapter<ScheduleCourseIte
 			@Override
 			public void onClick(DialogInterface arg0, int pos, boolean arg2) {
 				CheckBox checkBox = clist.get(pos).getCBView();
-Log.i("SELECTCOURSE","OnClick");				
-				//SelectViewHolder viewHolder = (SelectViewHolder) view.getTag();
-				//checkBox = viewHolder.getCheckBox();
 				if(!checkBox.isChecked())
 					checkBox.setChecked(true);
 				else
@@ -69,7 +65,7 @@ Log.i("SELECTCOURSE","OnClick");
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// Planet to display
+		// Course to display
 		ScheduleCourseItem course = (ScheduleCourseItem) this.getItem(position);
 
 		// The child views in each row.

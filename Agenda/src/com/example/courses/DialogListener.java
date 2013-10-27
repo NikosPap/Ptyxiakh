@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+// This class is responsibly for validating the typed grade, when user click ok
 public class DialogListener implements OnShowListener{
 	CourseItem course;
 	Activity activity;

@@ -1,11 +1,12 @@
 package com.example.courses;
 
+// This class hold all the useful informations about a course
 public class CourseItem {
 	private String name = "";
 	private String desc = "";
 	private Double grade = -1.0;
-	private boolean checked = false;
-	private boolean changed = false;
+	private boolean checked = false;	//boolean variable for status of checkbox
+	private boolean changed = false;	//boolean variable for status of grade
 
 	public boolean isChanged() {
 		return changed;

@@ -114,7 +114,6 @@ public class Schedule extends ExpandableListActivity {
     		String html="";
     		html = findTimetableHTML();
     		if(html != null){			//Get new Semester Schedule if it is needed
-Log.i("GETSCHEDULE",html);
     			GetSemesterSchedule getTask = new GetSemesterSchedule(db,this.getApplicationContext());
         		getTask.execute(html);
         		
@@ -171,7 +170,6 @@ Log.i("GETSCHEDULE",html);
     	set = sharedPref.getStringSet("CoursesChecked", null);
     	
     	if(set.isEmpty()){
-Log.i("BULLSHITTING", "MALAKIES");
     		for( int i = 0 ; i < 5 ; ++i ) { 
         		ArrayList<HashMap<String, String>> secList = new ArrayList<HashMap<String, String>>();
                 HashMap<String, String> child = new HashMap<String, String>();
@@ -181,7 +179,6 @@ Log.i("BULLSHITTING", "MALAKIES");
             }	
     	}
     	else{
-Log.i("BULLSHITTING__2", "MALAKIES");
     		ArrayList<HashMap<String, String>> MonL = new ArrayList<HashMap<String, String>>();
     		ArrayList<HashMap<String, String>> TueL = new ArrayList<HashMap<String, String>>();
     		ArrayList<HashMap<String, String>> WedL = new ArrayList<HashMap<String, String>>();
@@ -193,9 +190,10 @@ Log.i("BULLSHITTING__2", "MALAKIES");
     		while(it.hasNext()) {
     			String les = it.next();
     			String query = "SELECT " + db.getKeyDay() + ", " + db.getKeyHour() + ", " + db.getKeyClass() + " FROM " + db.getTableScourses()+ " WHERE " + db.getKeyName() + "=" + "\"" + les + "\"";
-//db.printAll();
+    			//db.printAll();
+    			
     			Cursor c = db.execQuery(query);
-Log.i("SCHEDULE_CREATE_LIST",les + "\n" + query + "\n" + c.getCount());
+    			//Log.i("SCHEDULE_CREATE_LIST",les + "\n" + query + "\n" + c.getCount());
     			if (c.moveToFirst()) {
     				do {
     					HashMap<String, String> courseMap = new HashMap<String, String>();
@@ -291,7 +289,7 @@ Log.i("SCHEDULE_CREATE_LIST",les + "\n" + query + "\n" + c.getCount());
 		int ye = year%1000;
 		String html;
 		int InitYear=ye;
-System.out.println(month+ "  " + year + "  Semester:" + Semester);
+		//System.out.println(month+ "  " + year + "  Semester:" + Semester);
 		
 		if(month>=10 || month<=3){		//Winter Semester
 			if(Semester == null || Semester.equals("Spring") || db.emptyDB() ){
@@ -320,7 +318,6 @@ System.out.println(month+ "  " + year + "  Semester:" + Semester);
 			InitYear--;
 			html="http://cgi.di.uoa.gr/~schedule/timetables/"+InitYear+"-"+ye+"/timetable_PPS_"+"spring"+InitYear+ye+".html";
 		}
-System.out.println(html);
 		return html;
 	}
 
@@ -338,6 +335,9 @@ System.out.println(html);
 		switch (item.getItemId()) {
 		case R.id.add:
 			add();
+			break;
+		case R.id.alarm:
+			alarm();
 			break;
 		default:
 			startActivity(new Intent(this,AgendMainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -414,6 +414,11 @@ System.out.println(html);
     		}while(c.moveToNext());
     		c.close();
     	}
+    }
+    
+    private void alarm(){
+    	//Retrieve semester courses
+    	//Set<String> set = sharedPref.getStringSet("CoursesChecked", null);
     }
 	
 	private void add() {

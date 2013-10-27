@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 @SuppressLint("SdCardPath")
+// This class is responsible for managing the database of the courses
 public class CoursesDataBaseHelper extends SQLiteOpenHelper{
 	 
     //The Android's default system path of your application database.
@@ -39,11 +40,11 @@ public class CoursesDataBaseHelper extends SQLiteOpenHelper{
  
     	boolean dbExist = checkDataBase();
     	if(dbExist){
-    		System.out.println("DataBase exists...");
+    		//System.out.println("DataBase exists...");
     		//do nothing - database already exist
     	}else{
-System.out.println("Create DataBase..");
-    		//By calling this method and empty database will be created into the default system path
+    		//System.out.println("Create DataBase..");
+    		//By calling this method an empty database will be created into the default system path
                //of our application so we are gonna be able to overwrite that database with our database.
         	this.getReadableDatabase();
  

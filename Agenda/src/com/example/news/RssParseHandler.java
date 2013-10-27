@@ -18,10 +18,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * SAX tag handler
- * 
- * @author ITCuties
- *
+ * SAX tag handler, responsibly for parsing the news from UOA site
  */
 
 public class RssParseHandler extends DefaultHandler 

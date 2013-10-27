@@ -15,12 +15,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-
-/**
- * @author mwho
- *
- */
 @SuppressLint("NewApi")
+//Class responsibly for displaying courses 'Κορμού'
 public class Fragment1_K extends ListFragment{
 	CoursesDataBaseHelper myDbHelper;
 	String TABLE_NAME = "Subjects";
@@ -35,11 +31,12 @@ public class Fragment1_K extends ListFragment{
 		
 		subjects = new ArrayList<CourseItem>();
 		
+		// Read courses from database
 		myDbHelper = new CoursesDataBaseHelper(this.getActivity());
-		//db = myDbHelper.openDatabase();
 		db = myDbHelper.getReadableDatabase();
 		
 		
+		// Creates the list of subjects. On top we have the checked courses
 		Cursor cursor = db.rawQuery(select, null);
 		if(cursor.moveToFirst()){
 			do{
@@ -48,7 +45,7 @@ public class Fragment1_K extends ListFragment{
 		}
 		cursor.close();
 		
-		
+		// after checked ones we display the unckecked courses
 		Cursor cursor2 = db.rawQuery(select2, null);
 		if(cursor2.moveToFirst()){
 			do{
@@ -59,6 +56,8 @@ public class Fragment1_K extends ListFragment{
 		
 		db.close();
 		myDbHelper.close();
+		
+		// Set adapter for this listfragment
 		CourseAdapter mAdapter = new CourseAdapter(this.getActivity(),subjects,myDbHelper);
 		setListAdapter(mAdapter);
 		
@@ -82,9 +81,8 @@ public class Fragment1_K extends ListFragment{
 	public void onDestroyView (){
 		super.onDestroyView();
 
-		//Store users selection
-		db = myDbHelper.getReadableDatabase();
-		//db = myDbHelper.openDatabase();
+		//Store users selection in database
+		db = myDbHelper.getReadableDatabase();		
 		for(int i = 0; i<subjects.size(); i++){
 			CourseItem s = subjects.get(i);
 			

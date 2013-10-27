@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+// This class is responsibly for changes (due to ckeckbox clicking) of subject's list
 public class CourseAdapter extends ArrayAdapter<CourseItem>{
 	private LayoutInflater inflater;
 	private List<CourseItem> clist;
@@ -48,7 +49,7 @@ public class CourseAdapter extends ArrayAdapter<CourseItem>{
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// Planet to display
+		// Course to display
 		CourseItem course = (CourseItem) this.getItem(position);
 
 		// The child views in each row.
@@ -67,6 +68,7 @@ public class CourseAdapter extends ArrayAdapter<CourseItem>{
 			// have to
 			// call findViewById() later when we reuse the row.
 			convertView.setTag(new SelectViewHolder(textView, checkBox));
+			
 			// If CheckBox is toggled, update the course it is tagged with.
 			if(course.isChecked()){
 				checkBox.setChecked(true);
@@ -76,12 +78,9 @@ public class CourseAdapter extends ArrayAdapter<CourseItem>{
 					CheckBox cb = (CheckBox) v;
 					CourseItem course = (CourseItem) cb.getTag();
 					course.setChanged(true);
+					
+					// Move the newly checked/unchecked course in the appropriate position in list
 					if(!course.isChecked()){
-						//for(int i=clist.indexOf(course);i>0;i--){
-						//	clist.remove(i);
-						//	clist.add(i, clist.get(i-1));
-						//}
-						//clist.remove(0);
 						int pos=0;
 						while(clist.get(pos).isChecked())
 							pos++;

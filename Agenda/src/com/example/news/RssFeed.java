@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+// Class that holds a list of all infos for each of the UOA news
 public class RssFeed 
     { 
         public  String title; 

@@ -25,20 +25,22 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int bd1=0x7f020000;
-        public static final int book=0x7f020001;
-        public static final int callendar=0x7f020002;
-        public static final int ekpa=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int ic_menu_add=0x7f020005;
-        public static final int popup_bg=0x7f020006;
-        public static final int profile=0x7f020007;
-        public static final int rss=0x7f020008;
+        public static final int alarm3=0x7f020000;
+        public static final int bd1=0x7f020001;
+        public static final int book=0x7f020002;
+        public static final int callendar=0x7f020003;
+        public static final int ekpa=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int ic_menu_add=0x7f020006;
+        public static final int popup_bg=0x7f020007;
+        public static final int profile=0x7f020008;
+        public static final int rss=0x7f020009;
     }
     public static final class id {
         public static final int CheckBox01=0x7f09000f;
         public static final int action_settings=0x7f090015;
         public static final int add=0x7f090016;
+        public static final int alarm=0x7f090017;
         public static final int date=0x7f090014;
         public static final int grid_item_image=0x7f090001;
         public static final int grid_item_label=0x7f090002;
@@ -99,10 +101,11 @@ public final class R {
     public static final class string {
         public static final int action_settings=0x7f050001;
         public static final int addCourse=0x7f05000b;
+        public static final int alarmCourse=0x7f05000c;
         public static final int app_name=0x7f050000;
         public static final int close=0x7f05000a;
         public static final int courses=0x7f050002;
-        public static final int description=0x7f05000c;
+        public static final int description=0x7f05000d;
         public static final int newsFeed=0x7f050005;
         public static final int profile=0x7f050004;
         public static final int schedule=0x7f050003;

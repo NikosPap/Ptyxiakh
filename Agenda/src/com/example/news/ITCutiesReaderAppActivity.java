@@ -26,19 +26,15 @@ import android.widget.TextView;
 import com.example.agenda.R;
 import com.example.agendaMain.AgendMainActivity;
 
-/**
- * Main application activity.
- * 
- * @author ITCuties
- *
- */
 
 @SuppressLint("NewApi")
+// Class responsibly for getting and displaying news titles of UOA
 public class ITCutiesReaderAppActivity extends Activity {
     
     // A reference to the local object
     private ITCutiesReaderAppActivity local;
     private LayoutInflater vi;
+    
     //Hold screens size
     private Point scrSize;
     
@@ -88,8 +84,7 @@ public class ITCutiesReaderAppActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem)
     {   
-        startActivity(new Intent(this,AgendMainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        startActivity(new Intent(this,AgendMainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
         return true;
     }
     public Point getScreenSize(){
@@ -173,14 +168,14 @@ public class ITCutiesReaderAppActivity extends Activity {
         protected void onPreExecute()		//display a loading message
         {
             super.onPreExecute();
-            //load=ProgressDialog.show(ITCutiesReaderAppActivity.this, "Please wait", "Loading..", true);
-            //load.setCancelable(true);
+            load=ProgressDialog.show(ITCutiesReaderAppActivity.this, "Please wait", "Loading..", true);
+            load.setCancelable(true);
         }
          
         @Override
         protected void onPostExecute(List<RssItem> result) {
         	//once the load has finished
-            //load.dismiss();
+            load.dismiss();
             
             Set<String> set;
             SharedPreferences.Editor prefEditor;

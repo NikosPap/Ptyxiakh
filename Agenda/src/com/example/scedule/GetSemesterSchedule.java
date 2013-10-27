@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+// Responsibly for parsing semester schedule
 public class GetSemesterSchedule extends AsyncTask<String, Void, Course >{
 	ScheduleCourseDatabaseHandler db;
 	Context context;
@@ -39,7 +40,7 @@ public class GetSemesterSchedule extends AsyncTask<String, Void, Course >{
 			HashMap<String, String> Prog = new HashMap<String, String>();
 			Document doc = Jsoup.connect(html[0]).get();
 			
-    //"http://cgi.di.uoa.gr/~schedule/timetables/12-13/timetable_PPS_spring1213.html").get();
+			//"http://cgi.di.uoa.gr/~schedule/timetables/12-13/timetable_PPS_spring1213.html").get();
 			for (int j = 0; j < 5; j++) { // 5 meres
 				for (int i = 1; i < 10; i++) { // 9 ai8ouses
 					for (Element table : doc.select("table[summary=" + Days[j] + "]")) {
@@ -76,8 +77,6 @@ public class GetSemesterSchedule extends AsyncTask<String, Void, Course >{
 						hour = res[0]+ "-" +res1[1];
 						course = res[3];
 						if(course.length()!=2){
-//System.out.println(key+ "----" + data1.trim() + "----" + hour + "----" + course.trim() );
-							//c.setData(key, data1.trim(), hour, course.trim());
 							db.addSCourse(new ScheduleCourseDatabaseItem(key, hour, course.trim(), data1.trim()));
 						}
 					}
@@ -88,10 +87,7 @@ public class GetSemesterSchedule extends AsyncTask<String, Void, Course >{
 					}
 				}
 			}
-db.printAll();
-			//for(int i=0; i<c.getData().size();i++){
-			//	System.out.println(c.getData().get(i).getDay() + "----"+c.getData().get(i).getHour() + "----"+c.getData().get(i).getClass()+ "-----"+c.getData().get(i).getName());
-			//}
+			//db.printAll();
 		}catch(HttpStatusException ex1){			//Semester schedule has not published yet
 			Log.e("GetSchedule1", ex1.getMessage());
 			error = 1;

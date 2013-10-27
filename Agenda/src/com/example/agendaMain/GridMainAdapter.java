@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+// This class is responsible for creating the main page of app.
+// It creates the icons with the text
 public class GridMainAdapter extends BaseAdapter {
     private Context mContext;
 

@@ -6,9 +6,6 @@ import org.jsoup.nodes.Document;
 /**
  * This code encapsulates RSS item data.
  * Our application needs title and link data.
- * 
- * @author ITCuties
- *
  */
 public class RssItem {
 	
@@ -45,7 +42,7 @@ public class RssItem {
 	{
 		Document doc=Jsoup.parse(desc);
 		this.description = doc.text();
-System.out.println(description);
+		//System.out.println(description);
 	}
 	
 	public String getPabDate() {

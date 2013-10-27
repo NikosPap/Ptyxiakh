@@ -18,25 +18,26 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-//geia :)
 
 public class AgendMainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		//set a default color in background of icons
 		ActionBar bar = getActionBar();
         TextView bv = new TextView(AgendMainActivity.this);
         bv.setTextSize(18);
         bar.setCustomView(bv);
         bar.setBackgroundDrawable(getResources().getDrawable(R.drawable.bd1));
-		
-		//setContentView(R.layout.activity_agenda_main);
+
+        // Make layout to be a customed gridview
 		setContentView(R.layout.activity_agenda_main_grid);
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 	    gridview.setAdapter(new GridMainAdapter(this));
 
+	    // Set on click listener for the icons
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	            if(position == 0)
@@ -59,16 +60,8 @@ public class AgendMainActivity extends Activity {
 		return true;
 	}
 	
-	/*Called when the user clicks the "Courses" button 
-	public void showCourses(View view){
-		Intent intent = new Intent(this, Courses.class);
-		startActivity(intent);
-		
-	}
-	*/
 	/*Called when the user clicks the "Courses" button */
 	public void showCourses(View view){
-		//Intent intent = new Intent(this, Courses.class);
 		Intent intent = new Intent(this, Courses.class);
 		startActivity(intent);
 	}

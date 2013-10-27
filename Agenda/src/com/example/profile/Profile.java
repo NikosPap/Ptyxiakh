@@ -22,13 +22,13 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+// Class responsibly for calculate and display profile infos
 public class Profile extends Activity {
 	CoursesDataBaseHelper db_courseHelper;
 	SQLiteDatabase dbC;
@@ -59,7 +59,8 @@ public class Profile extends Activity {
         bar.setBackgroundDrawable(getResources().getDrawable(R.drawable.bd1));
         
 		setContentView(R.layout.activity_agenda_profile);
-		
+
+		// Read infos from courses in database
 		db_courseHelper = new CoursesDataBaseHelper(this);
         try { 
         	db_courseHelper.createDataBase();
@@ -193,7 +194,7 @@ public class Profile extends Activity {
 			do{
 				String code = cursor.getString(1);
 				Double grade = cursor.getDouble(0);
-Log.i("PROFILE",code);
+				
 				if(code.equals("Ê26") || code.equals("Ê27") || code.equals("Ê28"))
 					igrades.add(grade);
 				else if(code.equals("Ê20á") || code.equals("Ê20â")){
@@ -230,7 +231,7 @@ Log.i("PROFILE",code);
 		if(cursor.moveToFirst()){
 			do{
 				Double grade = cursor.getDouble(0);
-Log.i("PROFILE",String.valueOf(grade));
+				
 				if(cursor.getDouble(1) == 1){
 					gradesTh.add(grade);
 					th = true;
@@ -272,7 +273,7 @@ Log.i("PROFILE",String.valueOf(grade));
 		
 		//We need at least one basic course from each direction (3 basic courses)
 		if(!gradesTh.isEmpty()){
-Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
+			//Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
 			weight_grade += 2*gradesTh.get(0);
 			gradesTh.remove(0);
 			syntelestes += 2;
@@ -280,7 +281,7 @@ Log.i("PROFILE TH","Theoritiki "+String.valueOf(gradesTh.get(0)));
 			remain_courses --;
 		}
 		if(!gradesYs.isEmpty()){
-Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
+			//Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
 			weight_grade += 2*gradesYs.get(0);
 			gradesYs.remove(0);
 			syntelestes += 2;
@@ -288,7 +289,7 @@ Log.i("PROFILE YS","Ypologistika "+String.valueOf(gradesYs.get(0)));
 			remain_courses --;
 		}
 		if(!gradesEp.isEmpty()){
-Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
+			//Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 			weight_grade += 2*gradesEp.get(0);
 			gradesEp.remove(0);
 			syntelestes += 2;
@@ -334,7 +335,7 @@ Log.i("PROFILE EP", "Epeksergasia "+String.valueOf(gradesEp.get(0)));
 		//Ptyxiakh 1,2 h Praktiki
 		for(int i=0; i<2; i++){
 			if(!igrades.isEmpty()){
-Log.i("PROFILE PTYX",String.valueOf(igrades.get(0)));
+				//Log.i("PROFILE PTYX",String.valueOf(igrades.get(0)));
 				weight_grade += 3.0*igrades.get(0);
 				syntelestes += 3.0;
 				igrades.remove(0);
@@ -347,7 +348,7 @@ Log.i("PROFILE PTYX",String.valueOf(igrades.get(0)));
 		
 		//Finally 25 courses kormou
 		for(int i=0; i<gradesK.size();i++){
-Log.i("PROFILE K value",String.valueOf(gradesK.get(i)));
+			//Log.i("PROFILE K value",String.valueOf(gradesK.get(i)));
 			weight_grade += 2.0*gradesK.get(i);
 			syntelestes += 2.0;
 			kor --;
@@ -365,12 +366,11 @@ Log.i("PROFILE K value",String.valueOf(gradesK.get(i)));
 			kor --;
 			remain_courses --;
 		}
-Log.i("PROFILE WEIGHT GRADE+SYNTEL",String.valueOf(weight_grade)+"  "+String.valueOf(syntelestes));
+		//Log.i("PROFILE WEIGHT GRADE+SYNTEL",String.valueOf(weight_grade)+"  "+String.valueOf(syntelestes));
 		if(weight_grade!=0)
 			average = (double)weight_grade/(double)syntelestes;
 		DecimalFormat df = new DecimalFormat("#.##");
-		String average2 = df.format(average);
-System.out.println("Profile Average is " + average2);		
+		String average2 = df.format(average);	
 		average = Double.valueOf(average2);
 	}
 	
@@ -392,21 +392,30 @@ System.out.println("Profile Average is " + average2);
 
 	private void calculateDirection(){
 		double gradeTh = 0.0, gradeYs = 0.0, gradeEp = 0.0;
+		
+		//Calculate a weighted average for each direction (weight for basic=3, for epiloghs kateythynshs=2 and for kormou=1)
 		double wTh = 0.0, wYs = 0.0, wEp = 0.0;
 		double synTh = 0.0, synYs = 0.0, synEp = 0.0;
+		
 		int ThC = 0, YsC = 0, EpC = 0;
 		
 		dbC = db_courseHelper.getReadableDatabase();
-		String select = "SELECT Grade, ThP FROM Subjects WHERE Code NOT LIKE '___å' AND Code NOT LIKE '____å' AND (ThP=1 OR ThP=2) AND Grade!=-1";
-		String select2 = "SELECT Grade, YS FROM Subjects WHERE Code NOT LIKE '___å' AND Code NOT LIKE '____å' AND (YS=1 OR YS=2) AND Grade!=-1";
-		String select3 = "SELECT Grade, EP FROM Subjects WHERE Code NOT LIKE '___å' AND Code NOT LIKE '____å' AND (EP=1 OR EP=2) AND Grade!=-1";
+		String select = "SELECT Grade, ThP, Code FROM Subjects WHERE Code NOT LIKE '___å' AND Code NOT LIKE '____å' AND (ThP=1 OR ThP=2) AND Grade!=-1";
+		String select2 = "SELECT Grade, YS, Code FROM Subjects WHERE Code NOT LIKE '___å' AND Code NOT LIKE '____å' AND (YS=1 OR YS=2) AND Grade!=-1";
+		String select3 = "SELECT Grade, EP, Code FROM Subjects WHERE Code NOT LIKE '___å' AND Code NOT LIKE '____å' AND (EP=1 OR EP=2) AND Grade!=-1";
 		
 		Cursor cursor = dbC.rawQuery(select, null);
 		if(cursor.moveToFirst()){
 			do{
 				ThC++;
-				wTh += ((2/cursor.getInt(1))*cursor.getDouble(0));
-				synTh += (2/cursor.getInt(1));
+				if(cursor.getString(2).contains("È") && cursor.getInt(1)==1){
+					wTh += (3*cursor.getDouble(0));
+					synTh += 3;
+				}
+				else{
+					wTh += (cursor.getInt(1)*cursor.getDouble(0));
+					synTh += cursor.getInt(1);
+				}
 			}while(cursor.moveToNext());
 		}
 		cursor.close();
@@ -417,8 +426,14 @@ System.out.println("Profile Average is " + average2);
 		if(cursor.moveToFirst()){
 			do{
 				YsC++;
-				wYs += ((2/cursor.getInt(1))*cursor.getDouble(0));
-				synYs += (2/cursor.getInt(1));
+				if(cursor.getString(2).contains("Õ") && cursor.getInt(1)==1){
+					wYs += (3*cursor.getDouble(0));
+					synYs += 3;
+				}
+				else{
+					wYs += (cursor.getInt(1)*cursor.getDouble(0));
+					synYs += cursor.getInt(1);
+					}
 			}while(cursor.moveToNext());
 		}
 		cursor.close();
@@ -429,8 +444,14 @@ System.out.println("Profile Average is " + average2);
 		if(cursor.moveToFirst()){
 			do{
 				EpC++;
-				wEp += ((2/cursor.getInt(1))*cursor.getDouble(0));
-				synEp += (2/cursor.getInt(1));
+				if(cursor.getString(2).contains("Å") && cursor.getInt(1)==1){
+					wEp += (3*cursor.getDouble(0));
+					synEp += 3;
+				}
+				else{
+					wEp += (cursor.getInt(1)*cursor.getDouble(0));
+					synEp += cursor.getInt(1);
+					}				
 			}while(cursor.moveToNext());
 		}
 		cursor.close();

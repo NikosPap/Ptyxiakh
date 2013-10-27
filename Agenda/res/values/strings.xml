@@ -18,6 +18,7 @@
     <string-array name="pref_default_values" />
 
     <string name="addCourse">Add</string>
+    <string name="alarmCourse">Alarm</string>
     <string name="description">empty</string>
 
 </resources>

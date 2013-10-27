@@ -16,19 +16,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
-
-/**
- * Class implements a list listener
- * 
- * @author ITCuties
- *
- */
 @SuppressLint("NewApi")
+// Class responsibly for displaying infos of news
 public class NewsListListener implements OnItemClickListener{
 
 	public static final String PUB_DESCR_LINK_MES = null;
 	// List item's reference
 	List<RssItem> listItems;
+	
 	// Calling activity reference
 	Activity activity;
 	

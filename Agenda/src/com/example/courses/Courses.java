@@ -21,10 +21,7 @@ import android.widget.TabHost.TabContentFactory;
 import com.example.agenda.R;
 import com.example.agendaMain.AgendMainActivity;
 
-/**
- * @author mwho
- *
- */
+// This class is responsibly for creating the customized tabhost view of Courses
 public class Courses extends FragmentActivity implements TabHost.OnTabChangeListener {
 
 	private TabHost mTabHost;
@@ -92,6 +89,7 @@ public class Courses extends FragmentActivity implements TabHost.OnTabChangeList
             mTabHost.setCurrentTabByTag(savedInstanceState.getString("tab")); //set the tab as per the saved state
         }
 		
+		// Connect to courses database
 		CoursesDataBaseHelper myDbHelper = new CoursesDataBaseHelper(this);
         try { 
         	myDbHelper.createDataBase();
@@ -102,8 +100,7 @@ public class Courses extends FragmentActivity implements TabHost.OnTabChangeList
 	
 	@Override
     public boolean onOptionsItemSelected(MenuItem menuItem){   
-        startActivity(new Intent(this,AgendMainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        startActivity(new Intent(this,AgendMainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
         return true;
     }
 	
