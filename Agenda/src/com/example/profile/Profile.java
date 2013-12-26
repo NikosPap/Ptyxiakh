@@ -185,7 +185,7 @@ public class Profile extends Activity {
 		
 		Button detail_button = new Button(this);
 		detail_button.setText("Details");
-		detail_button.setBackgroundColor(Color.rgb(56,176,222));
+		detail_button.setBackgroundColor(Color.rgb(0,150,249));
 		RelativeLayout.LayoutParams button_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		button_rl_par.addRule(RelativeLayout.ALIGN_BOTTOM, second_rmCourses_digit.getId());
 		button_rl_par.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -295,7 +295,7 @@ public class Profile extends Activity {
 
 		Button detail_button2 = new Button(this);
 		detail_button2.setText("Details");
-		detail_button2.setBackgroundColor(Color.rgb(56,176,222));
+		detail_button2.setBackgroundColor(Color.rgb(0,150,249));
 		RelativeLayout.LayoutParams button2_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		button2_rl_par.addRule(RelativeLayout.ALIGN_BOTTOM, second_smCourses_digit.getId());
 		button2_rl_par.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -386,7 +386,7 @@ public class Profile extends Activity {
 
 		switch(num){
 		case 0:
-			myIcon = getResources().getDrawable( R.drawable.one);
+			myIcon = getResources().getDrawable( R.drawable.zero);
 			break;
 		case 1:
 			myIcon = getResources().getDrawable( R.drawable.one);

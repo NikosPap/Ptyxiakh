@@ -45,6 +45,7 @@ public final class R {
         public static final int ten=0x7f020011;
         public static final int three=0x7f020012;
         public static final int two=0x7f020013;
+        public static final int zero=0x7f020014;
     }
     public static final class id {
         public static final int CheckBox01=0x7f090007;
