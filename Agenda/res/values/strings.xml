@@ -18,7 +18,12 @@
     <string-array name="pref_default_values" />
 
     <string name="addCourse">Add</string>
-    <string name="alarmCourse">Alarm</string>
     <string name="description">empty</string>
+    
+    <string name="addOption">Add</string>
+    <string name="aboutOption">About</string>
+    <string name="resetOption">Reset</string>
+    
+    <string name="click">Click on the option menu and play with the choices!</string>
 
 </resources>

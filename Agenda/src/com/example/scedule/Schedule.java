@@ -336,9 +336,6 @@ public class Schedule extends ExpandableListActivity {
 		case R.id.add:
 			add();
 			break;
-		case R.id.alarm:
-			alarm();
-			break;
 		default:
 			startActivity(new Intent(this,AgendMainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 	                | Intent.FLAG_ACTIVITY_SINGLE_TOP));
@@ -414,11 +411,6 @@ public class Schedule extends ExpandableListActivity {
     		}while(c.moveToNext());
     		c.close();
     	}
-    }
-    
-    private void alarm(){
-    	//Retrieve semester courses
-    	//Set<String> set = sharedPref.getStringSet("CoursesChecked", null);
     }
 	
 	private void add() {

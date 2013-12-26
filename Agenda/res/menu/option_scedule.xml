@@ -4,8 +4,4 @@
         android:title="@string/addCourse"
         android:icon="@drawable/ic_menu_add"
         android:showAsAction="ifRoom|withText" />
-    <item android:id="@+id/alarm"
-        android:title="@string/alarmCourse"
-        android:icon="@drawable/alarm3"
-        android:showAsAction="ifRoom|withText" />
 </menu>

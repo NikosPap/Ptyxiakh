@@ -13,6 +13,7 @@ import com.example.courses.CoursesDataBaseHelper;
 import com.example.news.ITCutiesReaderAppActivity;
 
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,10 +22,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -46,6 +53,7 @@ public class Profile extends Activity {
 	//th,ys,ep true if user has pass one basic course from each direction
 	boolean th = false, ys = false, ep = false;
 	
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,8 +65,6 @@ public class Profile extends Activity {
         bv.setTextSize(18);
         bar.setCustomView(bv);
         bar.setBackgroundDrawable(getResources().getDrawable(R.drawable.bd1));
-        
-		setContentView(R.layout.activity_agenda_profile);
 
 		// Read infos from courses in database
 		db_courseHelper = new CoursesDataBaseHelper(this);
@@ -68,99 +74,271 @@ public class Profile extends Activity {
         	throw new Error("Unable to create database");
         }
 		
+        //Create dynamically the xml view
+        ScrollView scrollv = new ScrollView(this);
+		RelativeLayout rl = new RelativeLayout(this);
         
-        //Calculate and display AVERAGE and REMAIN COURSES
-		calculateAverage_RemainCourses();		
-		TextView txa = (TextView)this.findViewById(R.id.prof_average);
-		txa.setText(Html.fromHtml("<big><b>Average</b></big> <br> <small>"+average+"</small>"));
+        //Calculate AVERAGE and REMAIN COURSES
+		calculateAverage_RemainCourses();
+
+	// DISPLAY AVERAGE:
+		RelativeLayout average_rl = new RelativeLayout(this);
+		average_rl.setId(View.generateViewId());
+		RelativeLayout.LayoutParams avg_rl_par = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		avg_rl_par.addRule(RelativeLayout.ALIGN_PARENT_START);
+		average_rl.setLayoutParams(avg_rl_par);
 		
-		TextView txr = (TextView) this.findViewById(R.id.prof_remainCourses);
-		txr.setText(Html.fromHtml("<big><b>Remain Courses</b></big> <br> <small>"+remain_courses+"</small>"));
-		txr.setOnClickListener(new View.OnClickListener() {
+		TextView avg_text = new TextView(this);
+		avg_text.setId(TextView.generateViewId());
+		avg_text.setText(Html.fromHtml("<big><b>Average</b></big>"));
+		RelativeLayout.LayoutParams avg_text_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		avg_text_rl_par.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		avg_text.setLayoutParams(avg_text_rl_par);
+		average_rl.addView(avg_text);
+
+		String average_string = Double.toString(average);
+		String[] numbers = average_string.split("\\.");
+
+		ImageView first_average_digit = new ImageView(this);
+		ImageView second_average_digit = new ImageView(this);
+		ImageView period = new ImageView(this);
+
+		Drawable first_average_digit_draw = find_png_files(numbers[0]);
+		Drawable second_average_digit_draw = find_png_files(numbers[1]);
+		Drawable period_draw = find_png_files("11");
+		
+		first_average_digit.setImageDrawable(first_average_digit_draw);
+		first_average_digit.setId(ImageView.generateViewId());
+		
+		second_average_digit.setImageDrawable(second_average_digit_draw);
+		second_average_digit.setId(ImageView.generateViewId());
+		
+		period.setImageDrawable(period_draw);
+		period.setId(ImageView.generateViewId());
+		
+		RelativeLayout.LayoutParams period_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		period_rl_par.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		period_rl_par.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		period.setLayoutParams(period_rl_par);
+		average_rl.addView(period);
+
+		RelativeLayout.LayoutParams avg_digit1_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		avg_digit1_rl_par.addRule(RelativeLayout.BELOW,avg_text.getId());
+		avg_digit1_rl_par.addRule(RelativeLayout.LEFT_OF,period.getId());
+		first_average_digit.setLayoutParams(avg_digit1_rl_par);
+		average_rl.addView(first_average_digit);
+
+		RelativeLayout.LayoutParams avg_digit2_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		avg_digit2_rl_par.addRule(RelativeLayout.RIGHT_OF,period.getId());
+		avg_digit2_rl_par.addRule(RelativeLayout.BELOW,avg_text.getId());
+		second_average_digit.setLayoutParams(avg_digit2_rl_par);
+		average_rl.addView(second_average_digit);
+
+
+	//DISPLAY REMAIN COURSES
+		RelativeLayout rmcourses_rl = new RelativeLayout(this);
+		rmcourses_rl.setId(View.generateViewId());
+		RelativeLayout.LayoutParams rmCourses_rl_par = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		rmCourses_rl_par.addRule(RelativeLayout.BELOW, average_rl.getId());
+		rmCourses_rl_par.setMargins(0, 25, 0, 0);
+		rmcourses_rl.setLayoutParams(rmCourses_rl_par);
+		
+		TextView rmCourses_text = new TextView(this);
+		rmCourses_text.setId(TextView.generateViewId());
+		rmCourses_text.setText(Html.fromHtml("<big><b>Remain Courses</b></big>"));
+		RelativeLayout.LayoutParams rmCourses_text_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		rmCourses_text_rl_par.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		rmCourses_text.setLayoutParams(rmCourses_text_rl_par);
+		rmcourses_rl.addView(rmCourses_text);
+
+		Drawable rmCourses_digit1_draw = null;
+		Drawable rmCourses_digit2_draw = null;
+
+		String remain_string = Integer.toString(remain_courses);
+		if(remain_courses>=10){
+			String[] rnumbers = remain_string.split("(?<=.)");
+			
+			rmCourses_digit1_draw = find_png_files(rnumbers[0]);
+			rmCourses_digit2_draw = find_png_files(rnumbers[1]);
+		}else{
+			rmCourses_digit1_draw = find_png_files("0");
+			rmCourses_digit2_draw = find_png_files(remain_string);
+		}
+
+		ImageView first_rmCourses_digit = new ImageView(this);
+		first_rmCourses_digit.setImageDrawable(rmCourses_digit1_draw);
+		first_rmCourses_digit.setId(ImageView.generateViewId());
+		
+		ImageView second_rmCourses_digit = new ImageView(this);
+		second_rmCourses_digit.setImageDrawable(rmCourses_digit2_draw);
+		second_rmCourses_digit.setId(ImageView.generateViewId());
+		
+		RelativeLayout.LayoutParams first_rmCourses_digit_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		first_rmCourses_digit_rl_par.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		first_rmCourses_digit_rl_par.addRule(RelativeLayout.BELOW,rmCourses_text.getId());
+		first_rmCourses_digit.setLayoutParams(first_rmCourses_digit_rl_par);
+		
+		RelativeLayout.LayoutParams second_rmCourses_digit_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		second_rmCourses_digit_rl_par.addRule(RelativeLayout.BELOW,rmCourses_text.getId());
+		second_rmCourses_digit_rl_par.addRule(RelativeLayout.RIGHT_OF,first_rmCourses_digit.getId());
+		second_rmCourses_digit.setLayoutParams(second_rmCourses_digit_rl_par);
+		
+		Button detail_button = new Button(this);
+		detail_button.setText("Details");
+		detail_button.setBackgroundColor(Color.rgb(56,176,222));
+		RelativeLayout.LayoutParams button_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		button_rl_par.addRule(RelativeLayout.ALIGN_BOTTOM, second_rmCourses_digit.getId());
+		button_rl_par.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		detail_button.setLayoutParams(button_rl_par);
+		detail_button.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
-		    	TextView ms = new TextView(ctx);
-		    	String basika="";
-		    	int bas2 = bas;
-		    	
-		    	if(bas != 0){
-		    		if(!th || !ys || !ep){
-		    			basika = "( ";
-		    			if(!th){
-		    				basika += "1 από Θεωρητική Πληροφορική";
-		    				bas2--;
-		    			}
-		    			if(!ys){
-		    				if(!th)
-		    					basika += " - ";
-		    				basika += "1 από Υπολογιστικών Συστημάτων και εφαρμογών";
-		    				bas2--;
-		    			}
-		    			if(!ep){
-		    				if(!th || !ys)
-		    					basika += " - ";
-		    				basika += "1 από Επικοινωνιών και Επεξεργασία σήματος";
-		    				bas2--;
-		    			}
-		    			if(bas2 != 0){
-		    				if(!th || !ys || !ep)
-		    					basika += " - ";
-		    				basika += String.valueOf(bas2) + " από όποιαδήποτε κατεύθυνση";
-		    			}
-		    			basika += (")");	
-		    		}
-		    		else{
-		    			basika += ("(από όποιαδήποτε κατεύθυνση)");
-		    		}
-		    	}
-		    	ms.setText("Κορμου: " + kor + '\n'+ '\n' + "Βασικά Κατεύθυνσης: " + bas + " " + basika + '\n' + '\n' + "Επιλογής: " + epil + '\n' + '\n' + "Γενικής Παιδείας: " + gen );
-		    	ms.setTextSize(16);
-		    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		    	builder
-		    	.setTitle("Remain Courses")
-		    	.setView(ms)
-		    	.setNeutralButton("OK", null)
-		    	.show();
-		    }
-		    });
+	    	TextView ms = new TextView(ctx);
+	    	String basika="";
+	    	int bas2 = bas;
+	    	
+	    	if(bas != 0){
+	    		if(!th || !ys || !ep){
+	    			basika = "( ";
+	    			if(!th){
+	    				basika += "1 από Θεωρητική Πληροφορική";
+	    				bas2--;
+	    			}
+	    			if(!ys){
+	    				if(!th)
+	    					basika += " - ";
+	    				basika += "1 από Υπολογιστικών Συστημάτων και εφαρμογών";
+	    				bas2--;
+	    			}
+	    			if(!ep){
+	    				if(!th || !ys)
+	    					basika += " - ";
+	    				basika += "1 από Επικοινωνιών και Επεξεργασία σήματος";
+	    				bas2--;
+	    			}
+	    			if(bas2 != 0){
+	    				if(!th || !ys || !ep)
+	    					basika += " - ";
+	    				basika += String.valueOf(bas2) + " από όποιαδήποτε κατεύθυνση";
+	    			}
+	    			basika += (")");	
+	    		}
+	    		else{
+	    			basika += ("(από όποιαδήποτε κατεύθυνση)");
+	    		}
+	    	}
+	    	ms.setText("Κορμου: " + kor + '\n'+ '\n' + "Βασικά Κατεύθυνσης: " + bas + " " + basika + '\n' + '\n' + "Επιλογής: " + epil + '\n' + '\n' + "Γενικής Παιδείας: " + gen );
+	    	ms.setTextSize(16);
+	    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+	    	builder
+	    	.setTitle("Remain Courses")
+	    	.setView(ms)
+	    	.setNeutralButton("OK", null)
+	    	.show();
+	    }
+	    });
 		
-		
-		//Calculate and display CURRENT SEMESTER COURSES
+		rmcourses_rl.addView(first_rmCourses_digit);
+		rmcourses_rl.addView(second_rmCourses_digit);
+		rmcourses_rl.addView(detail_button);
+
+
+		//Calculate CURRENT SEMESTER COURSES
 		semesterCourses();
-		TextView txs = (TextView) this.findViewById(R.id.prof_semesterCourses);
-		txs.setOnClickListener(new View.OnClickListener() {
+		
+	//DISPLAY SEMESTER COURSES
+		RelativeLayout semester_courses_rl = new RelativeLayout(this);
+		semester_courses_rl.setId(View.generateViewId());
+		RelativeLayout.LayoutParams smCourses_rl_par = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		smCourses_rl_par.addRule(RelativeLayout.BELOW, rmcourses_rl.getId());
+		smCourses_rl_par.setMargins(0, 25, 0, 0);
+		semester_courses_rl.setLayoutParams(smCourses_rl_par);
+				
+		TextView smCourses_text = new TextView(this);
+		smCourses_text.setId(TextView.generateViewId());
+		smCourses_text.setText(Html.fromHtml("<big><b>Current Semester Courses</b></big>"));
+		RelativeLayout.LayoutParams smCourses_text_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		smCourses_text_rl_par.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		smCourses_text.setLayoutParams(smCourses_text_rl_par);
+		semester_courses_rl.addView(smCourses_text);
+
+		Drawable smCourses_digit1_draw = null;
+		Drawable smCourses_digit2_draw = null;
+
+		String semester_string = Integer.toString(semester_courses);
+		if(semester_courses>=10){
+			String[] rnumbers = semester_string.split("(?<=.)");
+
+			smCourses_digit1_draw = find_png_files(rnumbers[0]);
+			smCourses_digit2_draw = find_png_files(rnumbers[1]);
+		}else{
+			smCourses_digit1_draw = find_png_files("0");
+			smCourses_digit2_draw = find_png_files(semester_string);
+		}
+
+		ImageView first_smCourses_digit = new ImageView(this);
+		first_smCourses_digit.setImageDrawable(smCourses_digit1_draw);
+		first_smCourses_digit.setId(ImageView.generateViewId());
+
+		ImageView second_smCourses_digit = new ImageView(this);
+		second_smCourses_digit.setImageDrawable(smCourses_digit2_draw);
+		second_smCourses_digit.setId(ImageView.generateViewId());
+
+		RelativeLayout.LayoutParams first_smCourses_digit_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		first_smCourses_digit_rl_par.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		first_smCourses_digit_rl_par.addRule(RelativeLayout.BELOW,smCourses_text.getId());
+		first_smCourses_digit.setLayoutParams(first_smCourses_digit_rl_par);
+
+		RelativeLayout.LayoutParams second_smCourses_digit_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		second_smCourses_digit_rl_par.addRule(RelativeLayout.BELOW,smCourses_text.getId());
+		second_smCourses_digit_rl_par.addRule(RelativeLayout.RIGHT_OF,first_smCourses_digit.getId());
+		second_smCourses_digit.setLayoutParams(second_smCourses_digit_rl_par);
+
+		Button detail_button2 = new Button(this);
+		detail_button2.setText("Details");
+		detail_button2.setBackgroundColor(Color.rgb(56,176,222));
+		RelativeLayout.LayoutParams button2_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		button2_rl_par.addRule(RelativeLayout.ALIGN_BOTTOM, second_smCourses_digit.getId());
+		button2_rl_par.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		detail_button2.setLayoutParams(button2_rl_par);
+		detail_button2.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
-		    	String text = "";
-		    	TextView ms = new TextView(ctx);
-		    	ScrollView scroll = new ScrollView(ctx);
-		    	
-		    	if(set != null){
-		    		if(!set.isEmpty()){
-		    			Iterator<String> setIter = set.iterator();
-		    			for(int i=0; i<set.size();i++){
-		    				text += "--" + setIter.next() + '\n' + '\n';
-		    			}
-		    		}
-		    		else
-		    			text += "No course has been selected for this semester";
-		    	}
-		    	else
-		    		text += "No course has been selected for this semester";
-		    	
-		    	ms.setText(text);
-		    	scroll.addView(ms);
-		    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		    	builder
-		    	.setTitle("Current Semester Courses")
-		    	.setView(scroll)
-		    	.setNeutralButton("OK", null)
-		    	.show();
+	    	String text = "";
+	    	TextView ms = new TextView(ctx);
+	    	ScrollView scroll = new ScrollView(ctx);
+	    	
+	    	if(set != null){
+	    		if(!set.isEmpty()){
+	    			Iterator<String> setIter = set.iterator();
+	    			for(int i=0; i<set.size();i++){
+	    				text += "--" + setIter.next() + '\n' + '\n';
+	    			}
+	    		}
+	    		else
+	    			text += "No course has been selected for this semester";
+	    	}
+	    	else
+	    		text += "No course has been selected for this semester";
+	    	
+	    	ms.setText(text);
+	    	scroll.addView(ms);
+	    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+	    	builder
+	    	.setTitle("Current Semester Courses")
+	    	.setView(scroll)
+	    	.setNeutralButton("OK", null)
+	    	.show();
 		    }
 		});
-		txs.setText(Html.fromHtml("<big><b>Current Semester Courses</b></big> <br> <small>"+semester_courses+"</small>"));
 		
+		semester_courses_rl.addView(first_smCourses_digit);
+		semester_courses_rl.addView(second_smCourses_digit);
+		semester_courses_rl.addView(detail_button2);
 		
+
 		//Calculate and display PROPOSED DIRECTION
 		calculateDirection();
+		
+	//DISPLAY PROPOSED DIRECTION
 		String p="";
 		if(!direction.equals(" - ")){
 			if(direC<=5)
@@ -170,9 +348,84 @@ public class Profile extends Activity {
 			else
 				p = "<font color=\"green\">(Υψηλή πρόταση)</font>";
 		}
-		TextView txd = (TextView) this.findViewById(R.id.prof_direction);
-		txd.setText(Html.fromHtml("<big><b>Proposed direction</b></big> <br> <small>"+direction+p+"</small>"));
+		RelativeLayout proposed_dir_rl = new RelativeLayout(this);
+		RelativeLayout.LayoutParams proposed_dir_rl_par = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		proposed_dir_rl_par.addRule(RelativeLayout.BELOW, semester_courses_rl.getId());
+		proposed_dir_rl_par.setMargins(0, 25, 0, 0);
+		proposed_dir_rl.setLayoutParams(proposed_dir_rl_par);
+		
+		TextView pr_text = new TextView(this);
+		pr_text.setId(TextView.generateViewId());
+		pr_text.setText(Html.fromHtml("<big><b>Proposed direction</b></big>"));
+		RelativeLayout.LayoutParams pr_text_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		pr_text_rl_par.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		pr_text.setLayoutParams(pr_text_rl_par);
+		proposed_dir_rl.addView(pr_text);
+
+		TextView proposed_dir_text = new TextView(this);
+		proposed_dir_text.setText(Html.fromHtml("<big>"+direction+p+"</big>"));
+		RelativeLayout.LayoutParams proposed_dir_text_rl_par = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		proposed_dir_text_rl_par.addRule(RelativeLayout.BELOW,pr_text.getId());
+		proposed_dir_text_rl_par.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		proposed_dir_text.setLayoutParams(proposed_dir_text_rl_par);
+		proposed_dir_rl.addView(proposed_dir_text);
+
+		
+		// Add all the views
+		rl.addView(average_rl);
+		rl.addView(rmcourses_rl);
+		rl.addView(semester_courses_rl);
+		rl.addView(proposed_dir_rl);
+		scrollv.addView(rl);
+		this.setContentView(scrollv);	
 	}
+	
+	private Drawable find_png_files(String number){
+		int num= Integer.parseInt(number);
+		Drawable myIcon = null;
+
+		switch(num){
+		case 0:
+			myIcon = getResources().getDrawable( R.drawable.one);
+			break;
+		case 1:
+			myIcon = getResources().getDrawable( R.drawable.one);
+			break;
+		case 2:
+			myIcon = getResources().getDrawable( R.drawable.two);
+			break;
+		case 3:
+			myIcon = getResources().getDrawable( R.drawable.three);
+			break;
+		case 4:
+			myIcon = getResources().getDrawable( R.drawable.four);
+			break;
+		case 5:
+			myIcon = getResources().getDrawable( R.drawable.five);
+			break;
+		case 6:
+			myIcon = getResources().getDrawable( R.drawable.six);
+			break;
+		case 7:
+			myIcon = getResources().getDrawable( R.drawable.seven);
+			break;
+		case 8:
+			myIcon = getResources().getDrawable( R.drawable.eight);
+			break;
+		case 9:
+			myIcon = getResources().getDrawable( R.drawable.nine);
+			break;
+		case 10:
+			myIcon = getResources().getDrawable( R.drawable.ten);
+			break;
+		case 11:
+			myIcon = getResources().getDrawable( R.drawable.period);
+			break;
+		}
+		
+		return myIcon;
+	}
+	
 	
 	private void calculateAverage_RemainCourses(){
 		ArrayList<Double> gradesK = new ArrayList<Double>();
@@ -369,7 +622,7 @@ public class Profile extends Activity {
 		//Log.i("PROFILE WEIGHT GRADE+SYNTEL",String.valueOf(weight_grade)+"  "+String.valueOf(syntelestes));
 		if(weight_grade!=0)
 			average = (double)weight_grade/(double)syntelestes;
-		DecimalFormat df = new DecimalFormat("#.##");
+		DecimalFormat df = new DecimalFormat("#.#");
 		String average2 = df.format(average);	
 		average = Double.valueOf(average2);
 	}

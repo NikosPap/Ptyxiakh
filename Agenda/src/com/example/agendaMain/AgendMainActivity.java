@@ -1,7 +1,6 @@
 package com.example.agendaMain;
 
 import com.example.agenda.R;
-//import com.example.courses.Courses;
 import com.example.courses.Courses;
 import com.example.news.ITCutiesReaderAppActivity;
 import com.example.profile.Profile;
