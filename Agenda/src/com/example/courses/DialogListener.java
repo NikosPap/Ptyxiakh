@@ -42,9 +42,25 @@ public class DialogListener implements OnShowListener{
 						Pattern pattern = Pattern.compile(regex);
 						Matcher matcher = pattern.matcher(gr);
 						if(matcher.matches()){
-							course.setGrade(Double.valueOf(gr));
-							course.setChanged(true);
-							alert.dismiss();
+							Double grade_double = Double.valueOf(gr);
+							if(grade_double < 5.0){
+								TextView tx = new TextView(activity);
+								tx.setTextSize(16);
+								tx.setText("The grade is not promotable. You better insert grade when you have pass the course");
+						
+								AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+								builder
+								.setTitle("Not promotable grade..")
+								.setView(tx)
+								.setNeutralButton(android.R.string.ok,null)
+								.show();
+				    	
+								grade.setText("");
+							}else{
+								course.setGrade(grade_double);
+								course.setChanged(true);
+								alert.dismiss();
+							}
 						}
 						else{
 							TextView tx = new TextView(activity);
